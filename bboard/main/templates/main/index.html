@@ -1,0 +1,42 @@
+{% extends "layout/basic.html" %}
+{% load static %}
+{% load thumbnail %}
+
+{% block content %}
+<h2 class="text-center">Последние 10 объявлений</h2>
+{% if bbs %}
+<div class="container">
+<ul class="list-unstyled">
+
+    {% for bb in bbs %}
+    <li class="media my-5 p-3 border">
+        {% url 'detail' rubric_pk=bb.rubric.pk pk=bb.pk as url %}
+        <a href="{{ url }}">
+        {% if bb.image %}
+        <img class="mr-3" src="{% thumbnail bb.image 'default' %}">
+        {% else %}
+        <img class="mr-3" src="{% static 'main/empty.jpg' %}">
+        {% endif %}
+        </a>
+        <div class="media-body">
+          <h3><a href="{{ url }}">
+          {{ bb.title }}<br></a></h3>
+          <div>{{ bb.content|slice:':100' }}...</div>
+            <br>
+            <center>
+          <p class="r-5 font-weight-bold">{{ bb.price }} руб.</p>
+          <small><p class="font-italic">{{ bb.create_at }}</p></small>
+                </center>
+        </div>
+    </li>
+    {% endfor %}
+
+</ul>
+    <div class="premium col-4 border r-4 border-warning">
+          <h3>Премиум товары</a></h3>
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock %}

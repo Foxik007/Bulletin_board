@@ -1,0 +1,53 @@
+.fit-picture {
+    display:block;
+    margin:auto;
+}
+
+.root {
+    font-size: larger;
+}
+
+
+.mr-auto p-2{
+    color:red;
+}
+
+
+
+footer {
+  margin-top: 400px;
+
+}
+
+img.main-image {
+    width: 300px;
+
+}
+
+img.additional-image {
+
+    width: 200px;
+    height: 150px;
+}
+
+ul.list-unstyled{
+    display: block;
+    width: 70%;
+
+}
+
+div.media-body {
+    margin-right: 50px;
+
+}
+
+div.premium {
+  display: flex;
+  margin-top: 48px;
+  margin-left: 10px;
+}
+
+div.container {
+      display: flex;
+      height: 88%;
+}

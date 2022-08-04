@@ -1,0 +1,26 @@
+{% extends "layout/basic.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<center>
+<h2>Вход</h2>
+{% if user.is_authenticated %}
+<p>Вы уже выполнили вход.</p>
+
+{% else %}
+{% load crispy_forms_tags %}
+
+<form method="post" class="col-md-3 text-center">
+    {% csrf_token %}
+     {{ form|crispy }}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% buttons submit='Войти' %}{% endbuttons %}
+</form>
+
+<p><a href="">Сброс пароля</a></p>
+        </center>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% load bootstrap4 %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}Главная{% endblock %} - Доска
+        объявлений</title>
+        {% bootstrap_css %}
+        <link rel="stylesheet" type="text/css"
+        href="{% static 'main/style.css' %}">
+        {% bootstrap_javascript jquery='slim' %}
+    </head>
+    <body class="container-fluid">
+        <header>
+            <img class="fit-picture"
+     src="{% static 'main/logo.png' %}" width="250" height="120">
+        </header>
+        <div class="row">
+            <ul class="col nav d-flex justify-content-end border">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+                    href="#" role="button" aria-haspopup="true"
+                    aria-expanded="true">Профиль {{ user.username }}</a>
+                    <div class="dropdown-menu">
+                        <a class="mr-auto p-2" href="{% url 'profile' %}">Мои объявления</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="mr-auto p-2" href="{% url 'change' %}">Изменить данные</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="mr-auto p-2" href="{% url 'password_change' %}">Изменить пароль</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="mr-auto p-2" href="{% url 'logout' %}">Выйти</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="mr-auto p-2" href="{% url 'delete_user' %}">Удалить</a>
+                    </div>
+                </li>
+                    {% else %}
+                <li class="nav-item"><a class="nav-link"
+                href="{% url 'register_user' %}">Регистрация</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="row">
+            <nav class="col-md-auto nav flex-column border">
+                <a class="nav-link root"
+                href="{% url 'index' %}">Главная</a>
+                {% for rubric in rubrics %}
+                {% ifchanged rubric.super_rubric.pk %}
+                <span class="nav-link root font-weight-bold">
+                {{ rubric.super_rubric.name }}</span>
+                {% endifchanged %}
+                <a class="nav-link" href="{% url 'by_rubric' pk=rubric.pk %}">
+                {{ rubric.name }}</a>
+                {% endfor %}
+                <a class="nav-link root" href="{% url 'other' page='about' %}">
+                О сайте</a>
+            </nav>
+            <section class="col border py-7 bg-light">
+                {% bootstrap_messages %}
+                {% block content %}
+                {% endblock %}
+            </section>
+        </div>
+
+    </body>
+<!-- Footer -->
+<footer class="text-center text-white" style="background-color: #f1f1f1;">
+
+  <!-- Copyright -->
+  <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2022 Copyright:
+    <a  href="https://yandex.ru/">Avito.ru</a>
+  </div>
+</footer>
+
+</html>

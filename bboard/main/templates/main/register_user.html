@@ -1,0 +1,17 @@
+{% extends "layout/basic.html" %}
+
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<center>
+<h2>Регистрация нового пользователя</h2>
+<form method="post" class="col-md-5 text-center">
+    {% csrf_token %}
+    {{ form|crispy }}
+    {% buttons submit='Зарегистрироваться' %}{% endbuttons %}
+</form>
+    </center>
+{% endblock %}
