@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
@@ -15,13 +14,13 @@ from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, TemplateView, DeleteView
 
 from .forms import ChangeUserInfoForm, RegisterUserForm, SearchForm, BbForm, AIFormSet
-from .models import AdvUser, Rubric, SubRubric, Bb
+from .models import AdvUser, SubRubric, Bb
 
 
 def index(request):
     bbs = Bb.objects.filter(is_active=True)[:10]
-    context = {'bbs':bbs}
-    return render(request,'main/index.html',context)
+    context = {'bbs': bbs}
+    return render(request, 'main/index.html', context)
 
 
 def other_page(requests, page):
@@ -31,36 +30,40 @@ def other_page(requests, page):
         raise Http404
     return HttpResponse(template.render(request=requests))
 
+
 class BBLoginView(LoginView):
     template_name = 'main/login.html'
 
-class BBLogoutView(LoginRequiredMixin,LogoutView):
+
+class BBLogoutView(LoginRequiredMixin, LogoutView):
     template_name = 'main/logout.html'
+
 
 @login_required
 def profile(request):
     bbs = Bb.objects.filter(author=request.user.pk)
-    context = {'bbs':bbs}
-    return render(request,'main/profile.html',context)
+    context = {'bbs': bbs}
+    return render(request, 'main/profile.html', context)
 
 
-class ChangeUserInfoView(SuccessMessageMixin,LoginRequiredMixin,UpdateView):
+class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = AdvUser
     template_name = 'main/change_user_info.html'
     form_class = ChangeUserInfoForm
     success_url = reverse_lazy('profile')
     success_message = 'Данные изменены'
 
-    def setup(self,request,*args,**kwargs):
+    def setup(self, request, *args, **kwargs):
         self.user_id = request.user.pk
-        return super().setup(request,*args,**kwargs)
+        return super().setup(request, *args, **kwargs)
 
-    def get_object(self,queryset=None):
+    def get_object(self, queryset=None):
         if not queryset:
             queryset = self.get_queryset()
-        return get_object_or_404(queryset,pk=self.user_id)
+        return get_object_or_404(queryset, pk=self.user_id)
 
-class BBPasswordChangeView(SuccessMessageMixin,LoginRequiredMixin,PasswordChangeView):
+
+class BBPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('profile')
 
@@ -73,15 +76,15 @@ class RegisterUserView(CreateView):
     form_class = RegisterUserForm
     success_url = reverse_lazy('register_done')
 
-    #Сохранение юзера + автологин
+    # Сохранение юзера + автологин
     def form_valid(self, form):
         user = form.save()
         user.set_password(form.cleaned_data.get("password1"))
         user.save()
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
+        # логин
         authenticated_user = authenticate(username=username, password=password)
-    # логин
         login(self.request, authenticated_user)
         return redirect(self.success_url)
 
@@ -89,25 +92,25 @@ class RegisterUserView(CreateView):
 class RegisterDoneView(TemplateView):
     template_name = 'main/register_done.html'
 
-class DeleteUserView(LoginRequiredMixin,DeleteView):
+
+class DeleteUserView(LoginRequiredMixin, DeleteView):
     model = AdvUser
     template_name = 'main/delete_user.html'
     success_url = reverse_lazy('index')
 
-    def setup(self,request,*args,**kwargs):
+    def setup(self, request, *args, **kwargs):
         self.user_id = request.user.pk
-        return super().setup(request,*args,**kwargs)
+        return super().setup(request, *args, **kwargs)
 
-    def get_object(self,queryset=None):
+    def get_object(self, queryset=None):
         if not queryset:
             queryset = self.get_queryset()
-        return get_object_or_404(queryset,pk=self.user_id)
+        return get_object_or_404(queryset, pk=self.user_id)
 
-    def post(self,request,*args,**kwargs):
+    def post(self, request, *args, **kwargs):
         logout(request)
-        messages.add_message(request,messages.SUCCESS,f'Пользователь удален')
-        return super().post(request,*args,**kwargs)
-
+        messages.add_message(request, messages.SUCCESS, f'Пользователь удален')
+        return super().post(request, *args, **kwargs)
 
 def by_rubric(request, pk):
     rubric = get_object_or_404(SubRubric, pk=pk)
@@ -130,26 +133,25 @@ def by_rubric(request, pk):
     return render(request, 'main/by_rubric.html', context)
 
 
-def detail(request,rubric_pk,pk):
-    bb = get_object_or_404(Bb,pk=pk)
+def detail(request, rubric_pk, pk):
+    bb = get_object_or_404(Bb, pk=pk)
     ais = bb.additionalimage_set.all()
-    context = {'bb':bb,'ais':ais}
-    return render(request,'main/detail.html',context)
+    context = {'bb': bb, 'ais': ais}
+    return render(request, 'main/detail.html', context)
 
 
 @login_required
 def profile_bb_detail(request, pk):
     bb = get_object_or_404(Bb, pk=pk)
     ais = bb.additionalimage_set.all()
-    #comments = Comment.objects.filter(bb=pk, is_active=True)
-    context = {'bb': bb, 'ais': ais,}# 'comments': comments}
+    context = {'bb': bb, 'ais': ais, }
     return render(request, 'main/profile_bb_detail.html', context)
 
 
 @login_required
 def profile_bb_add(request):
     if request.method == 'POST':
-        form = BbForm(request.POST, request.FILES)
+        form = BbForm(request.POST, request.FILES, )
         if form.is_valid():
             bb = form.save()
             formset = AIFormSet(request.POST, request.FILES, instance=bb)
@@ -161,8 +163,8 @@ def profile_bb_add(request):
     else:
         form = BbForm(initial={'author': request.user.pk})
         formset = AIFormSet()
-    context = {'form': form, 'formset': formset}
-    return render(request, 'main/profile_bb_add.html', context)
+        context = {'form': form, 'formset': formset}
+        return render(request, 'main/profile_bb_add.html', context)
 
 
 @login_required
@@ -182,7 +184,6 @@ def profile_bb_change(request, pk):
         formset = AIFormSet(instance=bb)
     context = {'form': form, 'formset': formset}
     return render(request, 'main/profile_bb_change.html', context)
-
 
 
 @login_required

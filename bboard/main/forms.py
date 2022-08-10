@@ -1,18 +1,15 @@
 from django import forms
 from django.contrib.auth import password_validation, authenticate, login
 from django.core.exceptions import ValidationError
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, ClearableFileInput
 
 from .models import AdvUser, SuperRubric, SubRubric, Bb, AdditionalImage
 
 
 class ChangeUserInfoForm(forms.ModelForm):
-    email = forms.EmailField(required=True,label='Адрес электронной почты')
-
-
     class Meta:
         model = AdvUser
-        fields = ('username','email','first_name','last_name','send_messages')
+        fields = ('username','email','first_name','last_name','send_messages','images')
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -32,11 +29,9 @@ class RegisterUserForm(forms.ModelForm):
             )}
             raise ValidationError(errors)
 
-
-
     class Meta:
         model = AdvUser
-        fields = ('username', 'email', 'password1','password2','first_name', 'last_name', 'send_messages')
+        fields = ('username', 'email', 'password1','password2','first_name', 'last_name', 'send_messages','images')
 
 
 class SubRubricForm(forms.ModelForm):
@@ -58,4 +53,5 @@ class BbForm(forms.ModelForm):
         widgets = {'author':forms.HiddenInput}
 
 
-AIFormSet = inlineformset_factory(Bb,AdditionalImage,fields='__all__')
+
+AIFormSet = inlineformset_factory(Bb,AdditionalImage,fields='__all__',extra = 1)

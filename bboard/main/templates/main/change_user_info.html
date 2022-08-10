@@ -6,11 +6,13 @@
 
 {% block content %}
 <center>
-<h2>Правка личных данных пользователя {{ user.username }}</h2>
-<form method="post" class="col-md-5 text-center">
+
+<h2>Правка личных данных пользователя {{ advuser.username }}</h2>
+<form method="post" class="col-md-5 text-center" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
     {% buttons submit='Сохранить' %}{% endbuttons %}
 </form>
+
 </center>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% load bootstrap4 %}
 {% load static %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -24,7 +25,13 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown"
                     href="#" role="button" aria-haspopup="true"
-                    aria-expanded="true">Профиль {{ user.username }}</a>
+                    aria-expanded="true">{% if user.images %}
+                            {% thumbnail user.images "50x60" as im %}
+                            <img src="{{ im.url }}">
+                            {% else %}
+                                <img class="mr-3" src="{% static 'main/empty.jpg' %}">
+                    {% endif %}Профиль {{ user.username }} </a>
+
                     <div class="dropdown-menu">
                         <a class="mr-auto p-2" href="{% url 'profile' %}">Мои объявления</a>
                         <div class="dropdown-divider"></div>

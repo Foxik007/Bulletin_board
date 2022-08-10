@@ -1,13 +1,15 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import path, include
 from django.views.decorators.cache import never_cache
 from django.views.static import serve
 from .views import index, other_page, BBLoginView, profile, BBLogoutView, ChangeUserInfoView, BBPasswordChangeView, \
     RegisterDoneView, RegisterUserView, DeleteUserView, by_rubric, detail, profile_bb_add, profile_bb_detail, \
     profile_bb_change, profile_bb_delete
 
+
 urlpatterns = [
+    path('__debug__/', include('debug_toolbar.urls')),
     path('<int:rubric_pk>/<int:pk>/',detail,name='detail'),
     path('<int:pk>/',by_rubric,name='by_rubric'),
     path('',index,name='index'),

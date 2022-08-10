@@ -1,15 +1,15 @@
 {% extends "layout/basic.html" %}
 
 {% load bootstrap4 %}
-
+{% load crispy_forms_tags %}
 {% block title %}Правка объявления - Профиль пользователя{% endblock %}
 
 {% block content %}
 <center>
 <h2>Правка объявления</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" class='col-md-5 text-center'>
     {% csrf_token %}
-    {% bootstrap_form form layout='horizontal' %}
+    {{ form|crispy }}
     {% bootstrap_formset formset layout='horizontal' %}
     {% buttons submit='Сохранить' %}{% endbuttons %}
 </form>

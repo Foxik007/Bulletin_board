@@ -8,7 +8,7 @@
 {% block content %}
 <center>
 <h2>Регистрация нового пользователя</h2>
-<form method="post" class="col-md-5 text-center">
+<form method="post" class="col-md-5 text-center" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
     {% buttons submit='Зарегистрироваться' %}{% endbuttons %}

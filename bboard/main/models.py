@@ -8,16 +8,12 @@ from .utilities import get_timestamp_path
 class AdvUser(AbstractUser):
     is_activated = models.BooleanField(default=True,db_index=True,verbose_name='Прошел активацию')
     send_messages = models.BooleanField(default=True,verbose_name='Слать оповещения о новых комментариях?')
+    images = models.ImageField(upload_to=get_timestamp_path,blank=True,verbose_name='Аватарка')
 
     def delete(self,*args,**kwargs):
         for bb in self.bb_set.all():
             bb.delete()
         super().delete(*args,**kwargs)
-
-    class Meta(AbstractUser.Meta):
-        pass
-
-
 
 class Rubric(models.Model):
     name = models.CharField(max_length=20, db_index=True, unique=True,
@@ -66,9 +62,9 @@ class Bb(models.Model):
     content = models.TextField(max_length=255,verbose_name='Описание')
     price = models.FloatField(default=0,verbose_name='Цена')
     contacts = models.TextField(verbose_name='Контакты')
-    image = models.ImageField(upload_to=get_timestamp_path,blank=True,verbose_name='Изображение')
+    image = models.ImageField(upload_to=get_timestamp_path,blank=True,verbose_name='Основное изображение')
     author = models.ForeignKey(AdvUser,on_delete=models.CASCADE,verbose_name='Автор')
-    is_active = models.BooleanField(default=False,db_index=True,verbose_name='Выводить в списке')
+    is_active = models.BooleanField(default=False,db_index=True,verbose_name='Сделать товар видимым?')
     create_at = models.DateTimeField(auto_now_add=True,db_index=True,verbose_name='Опубликовано')
 
     def delete(self,*args,**kwargs):
@@ -86,7 +82,7 @@ class Bb(models.Model):
 
 class AdditionalImage(models.Model):
     bb = models.ForeignKey(Bb,on_delete=models.CASCADE,verbose_name='Обьявление')
-    image = models.ImageField(upload_to=get_timestamp_path,verbose_name='Изображение')
+    image = models.ImageField(upload_to=get_timestamp_path,verbose_name='Доп. фото')
 
     class Meta:
         verbose_name = 'Дополнительная фотография'
