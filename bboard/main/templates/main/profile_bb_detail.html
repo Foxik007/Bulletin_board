@@ -1,6 +1,6 @@
 {% extends "layout/basic.html" %}
 
-{% block title %}{{ bb.title }} - Профиль пользователя{% endblock %}
+{% block title %}{{ bb.title }} - Профиль пользователя {% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-3">
@@ -27,16 +27,6 @@
     {% endfor %}
 </div>
 {% endif %}
-<p><a href="{% url 'main:profile' %}">Назад</a></p>
-{% if comments %}
-<div class="mt-5">
-    {% for comment in comments %}
-    <div class="my-2 p-2 border">
-        <h5>{{ comment.author }}</h5>
-        <p>{{ comment.content }}</p>
-        <p class="text-right font-italic">{{ comment.created_at }}</p>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+<p><a href="{% url 'profile' %}">Назад</a></p>
+
 {% endblock %}

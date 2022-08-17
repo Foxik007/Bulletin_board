@@ -7,11 +7,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 app = Celery('main')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
-#app.conf.beat_schedule = {
+# app.conf.beat_schedule = {
 #    'print_every_5_seconds': {
 #        'task': 'blog.tasks.last_post',
 #        'schedule': crontab(),
 #    },
-#}
+# }
 
 app.autodiscover_tasks()

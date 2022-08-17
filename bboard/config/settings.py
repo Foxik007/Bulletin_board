@@ -24,7 +24,6 @@ SECRET_KEY = 'django-insecure-8+3*f4y5xp@5_@62q1k8km)ug90(wl_bv4#(mz751(*lwmp*5e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -46,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     "debug_toolbar",
     'celery',
-
 ]
 
 
@@ -61,14 +59,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
+    'main.middlewares.TimeMiddleware',
 ]
+
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
     # ...
 ]
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -82,7 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'main.middlewares.bboard_context_processor',
+                'main.context_processors.categories_for_all_pages',
             ],
         },
     },
@@ -91,18 +92,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'bboard.data')
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -119,9 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
-
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
@@ -130,13 +122,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
-
 STATIC_URL = '/static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -154,4 +140,5 @@ THUMBNAIL_ALIASES = {
         },
     },
 }
+
 THUMBNAIL_BASEDIR = 'thumbnails'

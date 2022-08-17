@@ -12,13 +12,21 @@ from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, TemplateView, DeleteView
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .forms import ChangeUserInfoForm, RegisterUserForm, SearchForm, BbForm, AIFormSet
 from .models import AdvUser, SubRubric, Bb
+from .serializers import BbSerializers, BbSerializersDetail
 
 
 def index(request):
-    bbs = Bb.objects.filter(is_active=True)[:10]
+    bbs = (
+        Bb.objects
+        .filter(is_active=True)
+        .select_related('rubric')
+    )
     context = {'bbs': bbs}
     return render(request, 'main/index.html', context)
 
@@ -66,7 +74,6 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 class BBPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('profile')
-
     success_message = 'Пароль успешно изменен'
 
 
@@ -112,9 +119,16 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
         messages.add_message(request, messages.SUCCESS, f'Пользователь удален')
         return super().post(request, *args, **kwargs)
 
+
 def by_rubric(request, pk):
-    rubric = get_object_or_404(SubRubric, pk=pk)
-    bbs = Bb.objects.filter(is_active=True, rubric=pk)
+    rubric = get_object_or_404(SubRubric.objects.all().select_related('super_rubric'), pk=pk)
+    bbs = (
+        Bb.objects
+        .filter(is_active=True, rubric=pk)
+        .only('id', 'rubric_id', 'title', 'content', 'price', 'image')
+        .select_related('rubric')
+    )
+
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         q = Q(title__icontains=keyword) | Q(content__icontains=keyword)
@@ -182,8 +196,8 @@ def profile_bb_change(request, pk):
     else:
         form = BbForm(instance=bb)
         formset = AIFormSet(instance=bb)
-    context = {'form': form, 'formset': formset}
-    return render(request, 'main/profile_bb_change.html', context)
+        context = {'form': form, 'formset': formset}
+        return render(request, 'main/profile_bb_change.html', context)
 
 
 @login_required
@@ -196,3 +210,16 @@ def profile_bb_delete(request, pk):
     else:
         context = {'bb': bb}
         return render(request, 'main/profile_bb_delete.html', context)
+
+
+class BbListView(APIView):
+    def get(self, request):
+        announcements = Bb.objects.all()
+        serializer = BbSerializers(announcements, many=True)
+        return Response(serializer.data)
+
+class BbDetailView(APIView):
+    def get(self, request, pk):
+        announcement = Bb.objects.get(id=pk)
+        serializer = BbSerializersDetail(announcement)
+        return Response(serializer.data)
